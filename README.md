@@ -51,9 +51,13 @@ Použité komponenty
 
 Obr. 1 Schéma návrhu řešení
 
+<img src="images/blok_schema.png" alt="top level block diagram" width="300"/>
+
+Obr. 2 Schéma návrhu řešení
+
 <img src="images/sensor_connection.jpg" alt="top level block diagram" width="200"/>
 
-Obr. 2 Propojení HC-SR04 s piny desky Nexys A7-50t *(zdroj: GitHub [vhdl-course Tomas Fryza](https://github.com/tomas-fryza/vhdl-labs/blob/master/lab8-project/))*
+Obr. 3 Propojení HC-SR04 s piny desky Nexys A7-50t *(zdroj: GitHub [vhdl-course Tomas Fryza](https://github.com/tomas-fryza/vhdl-labs/blob/master/lab8-project/))*
 
 ## ⚙️ Funkce systému
 
@@ -90,26 +94,26 @@ Obr. 2 Propojení HC-SR04 s piny desky Nexys A7-50t *(zdroj: GitHub [vhdl-course
    - Při psaní echo_receiver jsme se inspirovali projektem z minulého roku. Náš echo_receiver má oproti loňské verzi lepší synchronizaci vstupu ```echo_in```, přesnější řízení měření pomocí stavového automatu a vyšší odolnost proti rušení. Navíc detekuje náběžnou hranu signálu ```trig``` a pracuje stabilněji při vysokých hodinových frekvencích.  
 <img src="images/simulations/echo_receiver_tb.png" alt="top level block diagram" width="1000"/>
 
-Obr. 3 Simulace bloku echo_receiver.vhd
+Obr. 4 Simulace bloku echo_receiver.vhd
 
  - [controller.vhd](project_files/controller.vhd) – Tento modul implementuje řídicí jednotku, která periodicky generuje ```trigger``` pulz pro měření vzdálenosti, čeká na ```echo``` nebo ```timeout```, zpracuje přijatá data a vyhodnocuje, zda naměřená vzdálenost překročila nastavený práh.
 <img src="images/simulations/controller_tb.png" alt="top level block diagram" width="1000"/>
 
-Obr. 4 Simulace bloku controller.vhd
+Obr. 5 Simulace bloku controller.vhd
 
  - [trig_pulse.vhd](project_files/trig_pulse.vhd) – Tento modul generuje pulz šířky ```PULSE_WIDTH``` (v taktech hodin) na výstupu ```trig_out```, když dostane impuls na vstupu start. Používá synchronní reset ```rst```. Při 100 MHz hodinách a ```PULSE_WIDTH := 1000``` vytvoří pulz o délce 10 µs.
 <img src="images/simulations/trig_pulse_tb.png" alt="top level block diagram" width="1000"/>
 
-Obr. 5 Simulace bloku trig_pulse.vhd
+Obr. 6 Simulace bloku trig_pulse.vhd
 
  - [display_control.vhd](project_files/display_control.vhd) – Tento modul implementuje systém řízení sedmisegmentového displeje, který podle tlačítek přepíná mezi zobrazením ID (```d01--d02```), vzdáleností ze dvou senzorů a aktuální prahovou hodnotou, přičemž zároveň indikuje vzdálenost vůči prahu pomocí LED.
 <img src="images/simulations/display_control_tb.png" alt="top level block diagram" width="1000"/>
 
-Obr. 6 Simulace bloku display_control.vhd
+Obr. 7 Simulace bloku display_control.vhd
 
 <img src="images/stavy.jpg" alt="Button states" width="750"/>
 
-Obr. 7 Ukázky stavů 7-segmentového displeje a signalizačních LED
+Obr. 8 Ukázky stavů 7-segmentového displeje a signalizačních LED
 
 ## Video ukázka měření
 https://github.com/user-attachments/assets/559e6796-e8bb-4ae0-9059-a520a27b77e6
