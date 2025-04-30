@@ -41,43 +41,50 @@ begin
                 counter <= (others => '0');
                 timeout_ctr <= (others => '0');
             else
+                -- State machine
                 case state is
+                    -- IDLE state: Waiting for the next measurement
                     when IDLE =>
                         trigger_out <= '0';
                         valid <= '0';
                         
                         if counter >= MEASUREMENT_INTERVAL-1 then
-                            counter <= (others => '0');
-                            state <= SEND_TRIGGER;
+                            counter <= (others => '0');  -- Reset counter
+                            state <= SEND_TRIGGER;       -- Transition to sending trigger
                         else
                             counter <= counter + 1;
                         end if;
-                        
+
+                    -- SEND_TRIGGER state: Sending a 10µs pulse
                     when SEND_TRIGGER =>
-                        trigger_out <= '1';
-                        state <= WAIT_ECHO;
-                        timeout_ctr <= (others => '0');
-                        
+                        trigger_out <= '1';   -- Activate trigger
+                        state <= WAIT_ECHO;   -- Transition to waiting for echo
+                        timeout_ctr <= (others => '0');  -- Reset timeout counter
+
+                    -- WAIT_ECHO state: Waiting for sensor response
                     when WAIT_ECHO =>
-                        trigger_out <= '0';
-                        
+                        trigger_out <= '0';   -- Deactivate trigger
+
+                        -- Timeout detection
                         if timeout_ctr >= TIMEOUT_DURATION-1 then
-                            distance_reg <= (others => '1');  -- Max distance on timeout
+                            distance_reg <= (others => '1');  -- Set max distance (511 cm)
                             state <= PROCESS_DATA;
+                        -- Valid data detected
                         elsif data_ready = '1' then
-                            distance_reg <= distance_in;
+                            distance_reg <= distance_in;      -- Store measured distance
                             state <= PROCESS_DATA;
                         else
-                            timeout_ctr <= timeout_ctr + 1;
+                            timeout_ctr <= timeout_ctr + 1;   -- Increment timeout counter
                         end if;
-                        
+
+                    -- PROCESS_DATA state: Evaluating results
                     when PROCESS_DATA =>
-                        distance_out <= distance_reg;
-                        valid <= '1';
+                        distance_out <= distance_reg;  -- Output measured value
+                        valid <= '1';                  -- Confirm data validity
                         
                         -- Dynamic threshold comparison
                         if unsigned(distance_reg) < unsigned(threshold) then
-                            thd <= '1';
+                            thd <= '1';  -- Object is closer than threshold
                         else
                             thd <= '0';
                         end if;
